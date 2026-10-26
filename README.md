@@ -24,8 +24,38 @@
 
 ## 本地运行
 
-1. 安装并启动 MySQL、Redis 与 Nacos。
-2. 在 Nacos 中配置数据库、Redis、文件服务等连接信息。
+### 使用 Docker Compose 启动基础设施
+
+复制环境变量模板并按需修改密码：
+
+```powershell
+Copy-Item .env.example .env
+docker compose up -d
+```
+
+该命令会启动：
+
+- MySQL 8：`localhost:3306`
+- Redis 7：`localhost:6379`
+- Nacos 2.0.4：`http://localhost:8848/nacos`
+- MinIO API：`http://localhost:9000`
+- MinIO 控制台：`http://localhost:9001`
+
+MySQL 首次启动会自动执行：
+
+- `deploy/mysql/init/01-schema.sql`：28 张表的纯结构
+- `deploy/mysql/init/02-seed.sql`：脱敏后的最小系统数据
+
+导入 Nacos 配置：
+
+```powershell
+.\deploy\nacos\import-config.ps1
+```
+
+然后继续启动后端服务：
+
+1. 确认 MySQL、Redis、Nacos 与 MinIO 均已启动。
+2. 在 Nacos 控制台检查 `application-dev.yml` 和各服务配置是否存在。
 3. 设置安全的 JWT 密钥：
 
    ```powershell
@@ -54,6 +84,10 @@
    npm install
    npm run serve
    ```
+
+建议的后端启动顺序为：`cloud-system`、`cloud-file`、`cloud-cms`、`cloud-ums`、`cloud-oms`、`cloud-auth`、`cloud-gateway`。
+
+> 演示数据中的管理员账号沿用原开发数据：`admin / admin123`。仅限本地开发，首次登录后必须立即修改密码。生产环境不得使用模板中的默认密码。
 
 ## 安全说明
 

@@ -1,0 +1,5 @@
+swagger:
+  enabled: true
+  title: 会员服务接口
+  description: 会员、购物车、收藏、浏览记录与评价接口
+

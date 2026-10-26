@@ -8,6 +8,7 @@
 *.db
 *.sqlite
 *.sql
+!deploy/mysql/init/*.sql
 *.doc
 *.docx
 *.pdf

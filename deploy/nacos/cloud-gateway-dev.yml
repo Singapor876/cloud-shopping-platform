@@ -1,0 +1,68 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: cloud-auth
+          uri: lb://cloud-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-system
+          uri: lb://cloud-system
+          predicates:
+            - Path=/system/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-file
+          uri: lb://cloud-file
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-cms
+          uri: lb://cloud-cms
+          predicates:
+            - Path=/cms/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-ums
+          uri: lb://cloud-ums
+          predicates:
+            - Path=/ums/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-oms
+          uri: lb://cloud-oms
+          predicates:
+            - Path=/oms/**
+          filters:
+            - StripPrefix=1
+
+security:
+  captcha:
+    enabled: true
+    type: math
+  xss:
+    enabled: true
+    exclude-urls:
+      - /system/notice
+  ignore:
+    whites:
+      - /auth/login
+      - /auth/register
+      - /auth/logout
+      - /code
+      - /file/**
+      - /cms/front/**
+      - /ums/login
+      - /ums/register
+      - /ums/front/**
+      - /oms/front/**
+      - /v2/api-docs
+      - /**/v2/api-docs
+

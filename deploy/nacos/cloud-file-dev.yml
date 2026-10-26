@@ -1,0 +1,19 @@
+file:
+  path: ./data/uploads
+  prefix: /statics
+  domain: http://localhost:9300
+
+minio:
+  url: http://localhost:9000
+  accessKey: ${MINIO_ROOT_USER:minioadmin}
+  secretKey: ${MINIO_ROOT_PASSWORD:minio_dev_password}
+  bucketName: ${MINIO_BUCKET:cloud-files}
+
+fdfs:
+  domain: http://localhost:8888
+
+swagger:
+  enabled: true
+  title: 文件服务接口
+  description: 文件上传与访问接口
+
