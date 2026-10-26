@@ -1,0 +1,11 @@
+package com.cloud.auth.form;
+
+/**
+ * 用户注册对象
+ * 
+ * @author cloud
+ */
+public class RegisterBody extends LoginBody
+{
+
+}

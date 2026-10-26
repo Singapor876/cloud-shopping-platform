@@ -1,0 +1,89 @@
+@startuml system_architecture_simple
+' UTF-8
+skinparam defaultFontName SimSun
+skinparam defaultFontSize 13
+skinparam backgroundColor #FFFFFF
+skinparam ArrowColor #444444
+skinparam ArrowThickness 1.5
+skinparam shadowing false
+skinparam linetype ortho
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #555555
+  BorderThickness 1.5
+  FontStyle bold
+}
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #555555
+}
+skinparam node {
+  BackgroundColor #FFFFFF
+  BorderColor #555555
+}
+skinparam package {
+  BackgroundColor #F8F8F8
+  BorderColor #888888
+  FontStyle bold
+  FontSize 14
+}
+
+title 图 1-1  系统总体架构图
+
+' ── 客户端层 ──────────────────────────────
+package "客户端层" {
+  together {
+    rectangle "front-ui\n前台商城（Vue2）"   as FRONT
+    rectangle "admin-ui\n后台管理端（Vue2）" as ADMIN
+  }
+}
+
+' ── 网关层 ────────────────────────────────
+package "网关层" {
+  rectangle "cloud-gateway\n路由转发 · JWT鉴权 · 负载均衡 · 验证码过滤" as GW
+}
+
+' ── 业务微服务层 ──────────────────────────
+package "业务微服务层  （服务间通过 OpenFeign + Nacos 互调）" {
+  together {
+    rectangle "cloud-auth\n认证服务"   as AUTH
+    rectangle "cloud-system\n系统服务" as SYS
+    rectangle "cloud-ums\n用户服务"    as UMS
+    rectangle "cloud-cms\n商品服务"    as CMS
+    rectangle "cloud-oms\n订单服务"    as OMS
+    rectangle "cloud-file\n文件服务"   as FILE
+  }
+}
+
+' ── 基础设施层 ────────────────────────────
+package "基础设施层" {
+  together {
+    node     "Nacos\n注册中心 · 配置中心"   as NACOS
+    database "Redis\n缓存 · 会话"           as REDIS
+    database "MySQL\n业务数据持久化"         as MYSQL
+    node     "MinIO\n图片 · 文件存储"       as MINIO
+  }
+}
+
+' ── 连线（全部使用方向箭头，强制正交，不交叉）─────
+FRONT -down-> GW
+ADMIN -down-> GW
+
+GW -down-> AUTH
+GW -down-> SYS
+GW -down-> UMS
+GW -down-> CMS
+GW -down-> OMS
+GW -down-> FILE
+
+AUTH -down-> REDIS
+SYS  -down-> MYSQL
+UMS  -down-> MYSQL
+CMS  -down-> MYSQL
+OMS  -down-> MYSQL
+FILE -down-> MINIO
+
+GW -down[dashed]-> NACOS : 注册/发现\n（所有服务均接入）
+
+@enduml
